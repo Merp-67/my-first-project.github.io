@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Мой путь в IT</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+      background: #1e1e1e;
+      color: white;
+    }
+    button {
+      padding: 15px 30px;
+      font-size: 18px;
+      margin: 20px;
+      cursor: pointer;
+      background: #00cc66;
+      color: black;
+      border: none;
+      border-radius: 10px;
+    }
+    button:hover { background: #00ff80; }
+    h1 { color: #00cc66; }
+  </style>
+</head>
+<body>
+  <h1>Серёжа, 20 лет, Оломоуц</h1>
+  <p id="status"><strong>Сейчас: работаю на складе Amazon</strong></p>
+  <p id="counter" style="margin-top: 30px; font-size: 18px;"></p>
+  <button onclick="changeStatus()">Сменить статус</button>
+
+    <div style="margin: 50px auto; max-width: 600px; padding: 30px; background: rgba(0,200,100,0.15); border-radius: 20px;">
+    <h2>Калькулятор зарплаты</h2>
+    <p>Сейчас на складе (netto):
+      <input type="number" id="currentSalary" value="30000" style="width:100px; padding:8px; font-size:18px;">
+      Kč
+    </p>
+    <p>Через 8–10 месяцев как junior:
+      <input type="number" id="futureSalary" value="65000" style="width:100px; padding:8px; font-size:18px;">
+      Kč
+    </p>
+    <button onclick="showDifference()" style="background:#ff9900; color:black; padding:18px 35px; font-size:20px; border:none; border-radius:15px; cursor:pointer;">
+      Показать разницу
+    </button>
+    <p id="result" style="font-size:24px; margin-top:30px; line-height:1.6; min-height:80px;"></p>
+  </div>
+
+  <script>
+        // Загружаем сохранённые значения при открытии страницы
+    if (localStorage.getItem("currentSalary")) {
+      document.getElementById("currentSalary").value = localStorage.getItem("currentSalary");
+    }
+    if (localStorage.getItem("futureSalary")) {
+      document.getElementById("futureSalary").value = localStorage.getItem("futureSalary");
+    }
+    let currentStatus = 0;
+    const statuses = [
+      "Сейчас: работаю на складе Amazon",
+      "Учу JavaScript по вечерам",
+      "Делаю свои первые проекты",
+      "Готовлю портфолио на GitHub",
+      "Получаю оффер junior frontend в Праге!",
+      "Зарплата 65 000+ netto, работаю из дома или hybrid",
+      "Живу своей мечтой!"
+    ];
+
+    const startDate = new Date("2025-11-27");  // сегодня
+    const targetDate = new Date("2026-09-01");
+
+    function updateCounter() {
+      const today = new Date();
+      const daysPassed = Math.floor((today - startDate) / (1000*60*60*24));
+      const daysLeft = Math.floor((targetDate - today) / (1000*60*60*24));
+      document.getElementById("counter").innerText = 
+        `Прошло дней: ${daysPassed} | Осталось примерно: ${daysLeft}`;
+    }
+
+    function changeStatus() {
+      currentStatus = (currentStatus + 1) % statuses.length;
+      document.getElementById("status").innerHTML = "<strong>" + statuses[currentStatus] + "</strong>";
+      updateCounter();
+    }
+
+         function showDifference() {
+      const current = Number(document.getElementById("currentSalary").value);
+      const future = Number(document.getElementById("futureSalary").value);
+      
+      // Сохраняем в память браузера
+      localStorage.setItem("currentSalary", current);
+      localStorage.setItem("futureSalary", future);
+
+      const diffMonth = future - current;
+      const diffYear = diffMonth * 12;
+
+      if (diffMonth <= 0) {
+        document.getElementById("result").innerHTML = "<strong style='color:#ff5555;'>Ты что, хочешь меньше зарабатывать? 😂</strong>";
+        return;
+      }
+
+      document.getElementById("result").innerHTML = 
+        `<strong style="color:#00ff80;">
+          +${diffMonth.toLocaleString()} Kč в месяц<br>
+          = +${diffYear.toLocaleString()} Kč в год!<br><br>
+          Это как работать на складе лишних ${Math.round(diffYear/current)} месяцев каждый год 🔥
+        </strong>`;
+    }
+
+    updateCounter();
+    setInterval(updateCounter, 86400000);
+  </script>
+</body>
+</html>
